@@ -63,10 +63,11 @@ def show_antrag():
     entries = []
     while row is not None:
         votes = {}
-        states = row['state'].split(',')
-        verified = row['verified'].split(',')
-        for v in reversed(row['vorstand'].split(',')):
-            votes[int(v)] = (int(states.pop()), int(verified.pop()))
+        if row['vorstand']:
+            states = row['state'].split(',')
+            verified = row['verified'].split(',')
+            for v in reversed(row['vorstand'].split(',')):
+                votes[int(v)] = (int(states.pop()), int(verified.pop()))
 
         entries.append({
             'subject': row['subject'],

@@ -167,11 +167,11 @@ def postmail():
         # insert new aid into db
         app.logger.debug('Creating new antrag %s', subject)
         date = datetime.datetime.now()
-        ub = 'ub-{}-{:2d}-'.format(date.year, date.month)
+        ub = 'ub-{}-{:02d}-'.format(date.year, date.month)
         cur = db.execute('select max(ub) as ub from antrag where ub LIKE ?', [ ub + '%' ])
         row, = cur.fetchone()
         if row is not None:
-            ub = ub + '{:2d}'.format(int(row[11:])+1)
+            ub = ub + '{:02d}'.format(int(row[11:])+1)
         else:
             ub = ub + '01'
         cur = db.execute('insert into antrag (msg_id, subject, ub, starter, public) values (?, ?, ?, ?, ?)',

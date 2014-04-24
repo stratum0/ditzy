@@ -2,7 +2,7 @@
 {% block body %}
  <style>
     table.entries {
-        width: 600px;
+        width: 700px;
     }
     .dot {
         margin-left: auto;
@@ -38,6 +38,7 @@
   </style>
   <table class=entries>
       <tr>
+          <th class="starter">Starter</th>
           <th class="subject">Subject</th>
           <th class="ub">UB</th>
   {% for v in vorstand %}
@@ -46,7 +47,8 @@
       </tr>
   {% for entry in entries %}
     <tr>
-        <td>{{ entry.subject }}</td>
+        <td>{{ entry.starter|e }}</td>
+        <td>{{ entry.subject|e }}</td>
         <td>{{ entry.ub }}</td>
       {% for v in vorstand %}
        {% if v in entry.votes %}

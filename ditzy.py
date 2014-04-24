@@ -69,10 +69,13 @@ def show_antrag():
             for v in reversed(row['vorstand'].split(',')):
                 votes[int(v)] = (int(states.pop()), int(verified.pop()))
 
+        starter, _ = email.utils.parseaddr(row['starter'])
+        if starter == '':
+            starter = row['starter']
         entries.append({
             'subject': row['subject'],
             'ub': row['ub'],
-            'starter': row['starter'],
+            'starter': starter,
             'votes': votes,
         })
 

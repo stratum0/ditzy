@@ -107,21 +107,21 @@ def postmail():
 
     # parse mail
     mail = email.message_from_string(request.data)
-    if not mail.has_key('List-Id') or 'vorstand.stratum0.org' not in mail.get('List-Id'):
-        app.logger.warning('List-Id should be vorstand.stratum0.org!')
-        return "no list-id, ignoring\n"
-
     mid = mail.get('Message-Id')
     if mid is None:
-        app.logger.warning('Message id found, ignoring mail!')
+        app.logger.warning('No message id found, ignoring mail!')
         return "no msg id, ignoring\n"
+
+    if not mail.has_key('List-Id') or 'vorstand.stratum0.org' not in mail.get('List-Id'):
+        app.logger.warning('List-Id should be vorstand.stratum0.org in %s!', mid)
+        return "no list-id, ignoring\n"
 
     # at this point, it's either an [antrag] thread start, or a reply
     db = get_db()
 
     cur = db.execute('select msg_id from msgs where msg_id = ?', [ mid ])
     if cur.fetchone():
-        app.logger.debug('Ignoring duplicate')
+        app.logger.debug('Ignoring duplicate message %s', mid)
         return "duplicate msg\n"
 
     # parse subject
@@ -130,7 +130,7 @@ def postmail():
     # get parent reply
     pid = mail.get('In-Reply-To')
     if pid is None and '[antrag]' not in subject.lower():
-        app.logger.debug('Ignoring non-antrag thread start')
+        app.logger.debug('Ignoring non-antrag thread start %s', mid)
         return "Ignoring non-antrag thread start\n"
 
     # check if it's a reply
@@ -145,7 +145,7 @@ def postmail():
             # new thread -> thread id == msg id
             tid = mid
         else:
-            app.logger.debug('no corresponding antrag found')
+            app.logger.debug('no corresponding antrag found for %s', mid)
             return "no corresponding antrag found\n"
     else:
         # it must be a new antrag, then (we checked this above)
@@ -175,7 +175,7 @@ def postmail():
             [ mid, subject, ub, mail.get('From'), 'false' ]
         )
         aid = cur.lastrowid
-        app.logger.debug('New antrag id: %d', aid)
+        app.logger.debug('creating new antrag with id %d for %s', aid, mid)
 
     # everything further on deals with votes
 

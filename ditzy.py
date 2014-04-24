@@ -172,7 +172,7 @@ def postmail():
         else:
             ub = ub + '01'
         cur = db.execute('insert into antrag (msg_id, subject, ub, starter, public) values (?, ?, ?, ?, ?)',
-            [ mid, subject, 'ub-04-01', mail.get('From'), 'false' ]
+            [ mid, subject, ub, mail.get('From'), 'false' ]
         )
         aid = cur.lastrowid
         app.logger.debug('New antrag id: %d', aid)
@@ -220,13 +220,13 @@ def postmail():
 
     return "ok: vote {} from {} for antrag {}, verification {}\n".format(state, vid, aid, verified)
 
-@app.route('/clear')
-def clear():
-    db = get_db()
-    db.execute('delete from votes')
-    db.execute('delete from antrag')
-    db.execute('delete from msgs')
-    return "ok\n"
+# @app.route('/clear')
+# def clear():
+    # db = get_db()
+    # db.execute('delete from votes')
+    # db.execute('delete from antrag')
+    # db.execute('delete from msgs')
+    # return "ok\n"
 
 @app.route('/logout')
 def logout():

@@ -167,7 +167,7 @@ def postmail():
         # insert new aid into db
         app.logger.debug('Creating new antrag %s', subject)
         date = datetime.datetime.now()
-        ub = 'ub-{}-{:02d}-'.format(date.year, date.month)
+        ub = 'UB-{}-{:02d}-'.format(date.year, date.month)
         cur = db.execute('select max(ub) as ub from antrag where ub LIKE ?', [ ub + '%' ])
         row, = cur.fetchone()
         if row is not None:

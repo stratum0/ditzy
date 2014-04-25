@@ -31,11 +31,11 @@ def check(msg, keyfile):
         state = None
 
         # if there is a +1 on a singular line
-        if re.search('^\+1$', text, re.MULTILINE):
+        if re.search('^\+1\s$', text.strip(), re.MULTILINE):
             state = +1
-        elif re.search('^\-1$', text, re.MULTILINE):
+        elif re.search('^\-1\s$', text.strip(), re.MULTILINE):
             state = -1
-        elif re.search('^\~0$', text, re.MULTILINE):
+        elif re.search('^\~0\s$', text.strip(), re.MULTILINE):
             state = 0
 
         # only verify if we have some kind of result

@@ -7,6 +7,7 @@ import mailproc
 import hashlib
 import re
 import datetime
+import time
 
 import config
 
@@ -174,8 +175,8 @@ def postmail():
             ub = ub + '{:02d}'.format(int(row[11:])+1)
         else:
             ub = ub + '01'
-        cur = db.execute('insert into antrag (msg_id, subject, ub, starter, public) values (?, ?, ?, ?, ?)',
-            [ mid, subject, ub, mail.get('From'), 'false' ]
+        cur = db.execute('insert into antrag (msg_id, subject, ub, starter, public, date) values (?, ?, ?, ?, ?)',
+            [ mid, subject, ub, mail.get('From'), 'false', int(time.time()) ]
         )
         aid = cur.lastrowid
         app.logger.debug('creating new antrag with id %d for %s', aid, mid)

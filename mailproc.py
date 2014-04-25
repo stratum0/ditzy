@@ -64,8 +64,6 @@ def check(msg, keyfile):
 
         # aight we have a proper text here
         text = msg.get_payload(decode=True)
-        text = text.decode(msg.get_content_charset('utf-8'))
-        # text = quopri.decodestring(text)
 
         state = None
 
@@ -83,9 +81,14 @@ def check(msg, keyfile):
 
         lockfile = open("verifying.lock", "w")
         fcntl.lockf(lockfile, fcntl.LOCK_EX)
-        file("mail_text", "w+").write(text.encode(sys.stdout.encoding))
+        file("mail_text", "w").write(text)
         # todo shellescape()
         verified = os.system("gpgv --keyring {} mail_text 2> /dev/null".format(keyfile)) == 0
+        # stupid hack, check out test larsan & chrissi cleartext test cases :(
+        if not verified:
+            text = text.decode(msg.get_content_charset('utf-8'))
+            file("mail_text", "w").write(text.encode(sys.stdout.encoding))
+            verified = os.system("gpgv --keyring {} mail_text 2> /dev/null".format(keyfile)) == 0
         os.unlink("mail_text")
         fcntl.lockf(lockfile, fcntl.LOCK_UN)
         os.unlink("verifying.lock")
@@ -96,8 +99,9 @@ def check(msg, keyfile):
 
 if __name__ == "__main__":
 
-    data = file("testmail").read()
+    # data = file("test/chrissitest").read()
+    data = file("test/1398164079.M658267P22090V0000000000000803I00000000000C40BE.mail.mugenguild.com:2,S").read()
     mail = email.message_from_string(data)
 
-    print check_verify(mail)
+    print check(mail, "keys/larsan.gpg")
 

@@ -4,7 +4,8 @@ create table antrag (
       subject string,
       ub string, -- unique
       starter string,
-      public boolean
+      public boolean,
+      date winterfell
 );
 
 create table votes (

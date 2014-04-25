@@ -162,6 +162,7 @@ def postmail():
 
     subject = re.sub('\[antrag\]', '', subject, re.IGNORECASE)
     subject = subject.replace('[#StratumV]', '')
+    subject = re.sub('^((Re|Fwd|AW|WG):\s+)*', '', subject, re.IGNORECASE)
 
     # if message id is thread id, this is a new antrag!
     if mid == tid:

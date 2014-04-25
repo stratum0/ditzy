@@ -64,6 +64,7 @@ def check(msg, keyfile):
 
         # aight we have a proper text here
         text = msg.get_payload(decode=True)
+        text = text.decode(msg.get_content_charset('utf-8'))
 
         state = None
 
@@ -81,12 +82,11 @@ def check(msg, keyfile):
 
         lockfile = open("verifying.lock", "w")
         fcntl.lockf(lockfile, fcntl.LOCK_EX)
-        file("mail_text", "w").write(text)
+        file("mail_text", "w").write(text.encode(msg.get_content_charset('utf-8')))
         # todo shellescape()
         verified = os.system("gpgv --keyring {} mail_text 2> /dev/null".format(keyfile)) == 0
         # stupid hack, check out test larsan & chrissi cleartext test cases :(
         if not verified:
-            text = text.decode(msg.get_content_charset('utf-8'))
             file("mail_text", "w").write(text.encode(sys.stdout.encoding))
             verified = os.system("gpgv --keyring {} mail_text 2> /dev/null".format(keyfile)) == 0
         os.unlink("mail_text")

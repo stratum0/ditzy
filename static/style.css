@@ -1,0 +1,39 @@
+table.entries {
+    width: 700px;
+}
+.dot {
+    margin-left: auto;
+    margin-right: auto;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid black;
+}
+.s_-1 {
+    background: red;
+}
+.s_0 {
+    background: blue;
+}
+.s_1 {
+    background: green;
+}
+.v_0 {
+    border: 2px solid red;
+}
+.v_1 {
+    border: 2px solid green;
+}
+.none {
+    margin-left: auto;
+    margin-right: auto;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid gray;
+}
+
+a.mid {
+    text-decoration: none;
+    color: black;
+}

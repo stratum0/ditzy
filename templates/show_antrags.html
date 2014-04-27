@@ -44,19 +44,21 @@
   {% for v in vorstand %}
           <th class="vorstand">{{ vorstand[v][1] }}</th>
   {% endfor %}
+          <th></th>
       </tr>
   {% for entry in entries %}
     <tr>
         <td>{{ entry.starter|e }}</td>
-        <td>{{ entry.subject|e }}</td>
+        <td><a class="mid" href="mid:{{ entry.mid }}">{{ entry.subject|e }}</a></td>
         <td>{{ entry.ub }}</td>
       {% for v in vorstand %}
        {% if v in entry.votes %}
-       <td><div class="dot s_{{ entry.votes[v][0] }} v_{{ entry.votes[v][1] }}"></td>
+        <td><div class="dot s_{{ entry.votes[v][0] }} v_{{ entry.votes[v][1] }}"></td>
        {% else %}
-       <td><div class="none"></div></td>
+        <td><div class="none"></div></td>
        {% endif %}
       {% endfor %}
+      <td class="outof"><span>{{ entry.totalok }}</span>/<span>{{ outof }}</span></td>
     </tr>
   {% else %}
     <li><em>No antrag in db!</em>

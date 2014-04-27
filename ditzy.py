@@ -52,6 +52,7 @@ def show_antrag():
     db = get_db()
     cur = db.execute(""" select id, name, short from vorstand order by id """)
     vorstand = dict([ (row['id'],(row['name'],row['short'])) for row in cur.fetchall() ])
+    outof = len(vorstand)/3*2
 
     cur = db.execute("""
         select antrag.id, msg_id, subject, ub, starter,
@@ -64,11 +65,16 @@ def show_antrag():
     entries = []
     while row is not None:
         votes = {}
+        totalok = 0
         if row['vorstand']:
             states = row['state'].split(',')
             verified = row['verified'].split(',')
             for v in reversed(row['vorstand'].split(',')):
-                votes[int(v)] = (int(states.pop()), int(verified.pop()))
+                state = int(states.pop())
+                ver = int(verified.pop())
+                votes[int(v)] = (state, ver)
+                if state > 0 and ver:
+                    totalok += 1
 
         starter, _ = email.utils.parseaddr(row['starter'])
         if starter == '':
@@ -77,12 +83,14 @@ def show_antrag():
             'subject': row['subject'],
             'ub': row['ub'],
             'starter': starter,
+            'mid': row['msg_id'][1:-1],
             'votes': votes,
+            'totalok': totalok,
         })
 
         row = cur.fetchone()
 
-    return render_template('show_antrags.html', vorstand=vorstand, entries=entries)
+    return render_template('show_antrags.html', vorstand=vorstand, entries=entries, outof=outof)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

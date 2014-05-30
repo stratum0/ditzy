@@ -5,6 +5,8 @@ import re
 import fcntl
 import quopri
 
+import config
+
 def check(msg, keyfile):
     if msg.is_multipart():
         # we have to go deeper!
@@ -42,14 +44,14 @@ def check(msg, keyfile):
         if state is None:
             return (text, sig, None, False)
 
-        lockfile = open("verifying.lock", "w")
+        lockfile = open("/tmp/verifying.lock", "w")
         fcntl.lockf(lockfile, fcntl.LOCK_EX)
-        file("mail_text", "w+").write(text)
-        file("mail_sig", "w+").write(sig)
+        file(os.path.join(config.datadir, "mail_text"), "w+").write(text)
+        file(os.path.join(config.datadir, "mail_sig"), "w+").write(sig)
         # todo shellescape()
         verified = os.system("gpgv --keyring {} mail_sig mail_text 2> /dev/null".format(keyfile)) == 0
-        os.unlink("mail_text")
-        os.unlink("mail_sig")
+        os.unlink(os.path.join(config.datadir, "mail_text"))
+        os.unlink(os.path.join(config.datadir, "mail_sig"))
         fcntl.lockf(lockfile, fcntl.LOCK_UN)
         os.unlink("verifying.lock")
 

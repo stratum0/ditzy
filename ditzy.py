@@ -17,7 +17,7 @@ app.config.from_object(__name__)
 
 # Load default config and override config from an environment variable
 app.config.update(dict(
-    DATABASE=os.path.join(app.root_path, 'ditzy.db'),
+    DATABASE=os.path.join(config.datadir, 'ditzy.db'),
     DEBUG=True,
     SECRET_KEY=config.key
 ))

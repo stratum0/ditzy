@@ -184,7 +184,7 @@ def postmail():
             ub = ub + '{:02d}'.format(int(row[11:])+1)
         else:
             ub = ub + '01'
-        cur = db.execute('insert into antrag (msg_id, subject, ub, starter, public, date) values (?, ?, ?, ?, ?)',
+        cur = db.execute('insert into antrag (msg_id, subject, ub, starter, public, date) values (?, ?, ?, ?, ?, ?)',
             [ mid, subject, ub, mail.get('From'), 'false', int(time.time()) ]
         )
         aid = cur.lastrowid

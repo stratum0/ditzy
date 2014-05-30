@@ -92,7 +92,7 @@ def check(msg, keyfile):
         verified = os.system("gpgv --keyring {} {} 2> /dev/null".format(keyfile, mail_text)) == 0
         # stupid hack, check out test larsan & chrissi cleartext test cases :(
         if not verified:
-            file(mail_text, "w").write(text.encode(sys.stdout.encoding))
+            file(mail_text, "w").write(text.encode('utf-8'))
             verified = os.system("gpgv --keyring {} {} 2> /dev/null".format(keyfile, mail_text)) == 0
         os.unlink(mail_text)
         fcntl.lockf(lockfile, fcntl.LOCK_UN)

@@ -44,16 +44,18 @@ def check(msg, keyfile):
         if state is None:
             return (text, sig, None, False)
 
+        mail_text = os.path.join(config.datadir, "mail_text")
+        mail_sig = os.path.join(config.datadir, "mail_sig")
         lockfile = open("/tmp/verifying.lock", "w")
         fcntl.lockf(lockfile, fcntl.LOCK_EX)
-        file(os.path.join(config.datadir, "mail_text"), "w+").write(text)
-        file(os.path.join(config.datadir, "mail_sig"), "w+").write(sig)
+        file(mail_text, "w+").write(text)
+        file(mail_sig, "w+").write(sig)
         # todo shellescape()
-        verified = os.system("gpgv --keyring {} mail_sig mail_text 2> /dev/null".format(keyfile)) == 0
-        os.unlink(os.path.join(config.datadir, "mail_text"))
-        os.unlink(os.path.join(config.datadir, "mail_sig"))
+        verified = os.system("gpgv --keyring {} {} {} 2> /dev/null".format(keyfile, mail_sig, mail_text)) == 0
+        os.unlink(mail_text)
+        os.unlink(mail_sig)
         fcntl.lockf(lockfile, fcntl.LOCK_UN)
-        os.unlink("verifying.lock")
+        os.unlink("/tmp/verifying.lock")
 
         return (text, sig, state, verified)
 
@@ -82,28 +84,21 @@ def check(msg, keyfile):
         if state is None:
             return False
 
-        lockfile = open("verifying.lock", "w")
+        mail_text = os.path.join(config.datadir, "mail_text")
+        lockfile = open("/tmp/verifying.lock", "w")
         fcntl.lockf(lockfile, fcntl.LOCK_EX)
-        file("mail_text", "w").write(text.encode(msg.get_content_charset('utf-8')))
+        file(mail_text, "w").write(text.encode(msg.get_content_charset('utf-8')))
         # todo shellescape()
-        verified = os.system("gpgv --keyring {} mail_text 2> /dev/null".format(keyfile)) == 0
+        verified = os.system("gpgv --keyring {} {} 2> /dev/null".format(keyfile, mail_text)) == 0
         # stupid hack, check out test larsan & chrissi cleartext test cases :(
         if not verified:
-            file("mail_text", "w").write(text.encode(sys.stdout.encoding))
-            verified = os.system("gpgv --keyring {} mail_text 2> /dev/null".format(keyfile)) == 0
-        os.unlink("mail_text")
+            file(mail_text, "w").write(text.encode(sys.stdout.encoding))
+            verified = os.system("gpgv --keyring {} {} 2> /dev/null".format(keyfile, mail_text)) == 0
+        os.unlink(mail_text)
         fcntl.lockf(lockfile, fcntl.LOCK_UN)
-        os.unlink("verifying.lock")
+        os.unlink("/tmp/verifying.lock")
 
         return (text, '', state, verified)
 
     return False
-
-if __name__ == "__main__":
-
-    # data = file("test/chrissitest").read()
-    data = file("test/1398164079.M658267P22090V0000000000000803I00000000000C40BE.mail.mugenguild.com:2,S").read()
-    mail = email.message_from_string(data)
-
-    print check(mail, "keys/larsan.gpg")
 

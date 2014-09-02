@@ -33,6 +33,3 @@ create table msgs (
     msg_id string unique,
     thread_id string
 );
-
-insert into vorstand (name, short, email, pass, pubkey) VALUES
-    ( 'a', 'b', 'a@b.c', '0363f1a98b0c507a237977267358886724194e58198ae5efc58c659238ee8fc3', 'key'),
